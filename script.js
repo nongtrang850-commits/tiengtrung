@@ -46,7 +46,6 @@ const defaultWords = [
 ];
 
 
-
 /* =====================================================
    DỮ LIỆU CHỦ ĐỀ MẶC ĐỊNH
    ===================================================== */
@@ -97,6 +96,8 @@ let writingWords = [];
 let writingIndex = 0;
 
 let writingScore = 0;
+
+
 /* =====================================================
    LƯU DỮ LIỆU
    ===================================================== */
@@ -171,8 +172,8 @@ function showPage(page) {
     }
 
     if (page === "writing") {
-    startWriting();
-}
+        startWriting();
+    }
 
     window.scrollTo({
         top: 0,
@@ -470,20 +471,19 @@ function createTopic() {
     showPage("vocab");
 }
 
+
 /* =====================================================
    XÓA CHỦ ĐỀ
    ===================================================== */
 
 function deleteTopic(id) {
 
-    // Chuyển về String để tránh lỗi kiểu dữ liệu
     id = String(id);
 
     const topic = topics.find(
         item => String(item.id) === id
     );
 
-    // Không tìm thấy chủ đề
     if (!topic) {
 
         alert("Không tìm thấy chủ đề cần xóa.");
@@ -503,13 +503,11 @@ function deleteTopic(id) {
     }
 
 
-    // Xóa chủ đề
     topics = topics.filter(
         item => String(item.id) !== id
     );
 
 
-    // Xóa toàn bộ từ vựng của chủ đề
     words = words.filter(
         word =>
             !(
@@ -519,11 +517,9 @@ function deleteTopic(id) {
     );
 
 
-    // Lưu lại localStorage
     saveData();
 
 
-    // Nếu đang ở chủ đề vừa xóa
     if (
         currentClass === topic.hsk &&
         currentTopic === topic.name
@@ -534,9 +530,9 @@ function deleteTopic(id) {
     }
 
 
-    // Cập nhật giao diện
     renderHome();
 }
+
 
 /* =====================================================
    ĐÓNG MODAL
@@ -703,18 +699,16 @@ function renderVocabulary() {
 
                 <button
                     class="listen"
-                    onclick="speak(
-                        '${escapeAttribute(word.hanzi)}'
-                    )">
+                    onclick="speak('${escapeAttribute(word.hanzi)}')">
                     🔊
                 </button>
 
 
-<button
-    class="delete-topic"
-    onclick="deleteTopic('${topic.id}'); event.stopPropagation();">
-    🗑
-</button>
+                <button
+                    class="delete-topic"
+                    onclick="deleteTopic('${topic.id}'); event.stopPropagation();">
+                    🗑
+                </button>
 
             </div>
 
@@ -891,10 +885,6 @@ function deleteWord(id) {
 
 /* =====================================================
    PINYIN
-   Nhập:
-   ni3hao3
-   =>
-   nǐhǎo
    ===================================================== */
 
 const toneMap = {
@@ -1026,6 +1016,11 @@ document.addEventListener(
             );
 
 
+        if (!input) {
+            return;
+        }
+
+
         input.addEventListener(
             "input",
             function() {
@@ -1093,17 +1088,19 @@ function insertTone(tone) {
 
 
 /* =====================================================
-   PHÁT ÂM
+   PHÁT ÂM - ĐÃ SỬA CHO ĐIỆN THOẠI
    ===================================================== */
 
 function speak(text) {
 
-    if (
-        !("speechSynthesis" in window)
-    ) {
+    if (!text) {
+        return;
+    }
+
+    if (!("speechSynthesis" in window)) {
 
         alert(
-            "Trình duyệt không hỗ trợ phát âm."
+            "Điện thoại hoặc trình duyệt này không hỗ trợ phát âm."
         );
 
         return;
@@ -1119,11 +1116,16 @@ function speak(text) {
     }
 
 
-    speechSynthesis.cancel();
+    // Hủy âm thanh trước đó
+    window.speechSynthesis.cancel();
 
 
     const voice =
-        new SpeechSynthesisUtterance(text);
+        new SpeechSynthesisUtterance();
+
+
+    voice.text =
+        text;
 
 
     voice.lang =
@@ -1134,9 +1136,93 @@ function speak(text) {
         0.8;
 
 
-    speechSynthesis.speak(
-        voice
-    );
+    voice.pitch =
+        1;
+
+
+    voice.volume =
+        1;
+
+
+    /*
+       Một số điện thoại cần đợi danh sách
+       giọng đọc được tải xong.
+    */
+    const speakNow = function () {
+
+        window.speechSynthesis.cancel();
+
+        window.speechSynthesis.speak(voice);
+
+    };
+
+
+    const voices =
+        window.speechSynthesis.getVoices();
+
+
+    /*
+       Ưu tiên giọng tiếng Trung nếu điện thoại có.
+    */
+    const chineseVoice =
+        voices.find(v =>
+            v.lang &&
+            (
+                v.lang.toLowerCase() === "zh-cn" ||
+                v.lang.toLowerCase() === "zh"
+            )
+        );
+
+
+    if (chineseVoice) {
+
+        voice.voice =
+            chineseVoice;
+
+    }
+
+
+    /*
+       Trên một số trình duyệt điện thoại,
+       voices chưa tải ngay lần đầu.
+    */
+    if (voices.length === 0) {
+
+        window.speechSynthesis.onvoiceschanged =
+            function () {
+
+                const newVoices =
+                    window.speechSynthesis.getVoices();
+
+
+                const newChineseVoice =
+                    newVoices.find(v =>
+                        v.lang &&
+                        (
+                            v.lang.toLowerCase() === "zh-cn" ||
+                            v.lang.toLowerCase() === "zh"
+                        )
+                    );
+
+
+                if (newChineseVoice) {
+
+                    voice.voice =
+                        newChineseVoice;
+
+                }
+
+
+                speakNow();
+
+            };
+
+    }
+    else {
+
+        speakNow();
+
+    }
 }
 
 
@@ -1144,42 +1230,74 @@ function speak(text) {
    NÚT ÂM THANH
    ===================================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    const soundBtn = document.getElementById("soundBtn");
+        const soundBtn =
+            document.getElementById("soundBtn");
 
-    if (!soundBtn) {
-        return;
-    }
 
-    if (localStorage.getItem("sound") === "off") {
-        soundBtn.textContent = "🔇";
-    } else {
-        soundBtn.textContent = "🔊";
-    }
+        if (!soundBtn) {
+            return;
+        }
 
-    soundBtn.addEventListener("click", function () {
 
-        const current =
-            localStorage.getItem("sound");
+        if (
+            localStorage.getItem("sound") === "off"
+        ) {
 
-        if (current === "off") {
+            soundBtn.textContent =
+                "🔇";
 
-            localStorage.setItem("sound", "on");
+        }
+        else {
 
-            soundBtn.textContent = "🔊";
-
-        } else {
-
-            localStorage.setItem("sound", "off");
-
-            soundBtn.textContent = "🔇";
+            soundBtn.textContent =
+                "🔊";
 
         }
 
-    });
 
-});
+        soundBtn.addEventListener(
+            "click",
+            function () {
+
+                const current =
+                    localStorage.getItem("sound");
+
+
+                if (current === "off") {
+
+                    localStorage.setItem(
+                        "sound",
+                        "on"
+                    );
+
+                    soundBtn.textContent =
+                        "🔊";
+
+                }
+                else {
+
+                    localStorage.setItem(
+                        "sound",
+                        "off"
+                    );
+
+                    soundBtn.textContent =
+                        "🔇";
+
+                    window.speechSynthesis.cancel();
+
+                }
+
+            }
+        );
+
+    }
+);
+
 
 /* =====================================================
    FLASHCARD
@@ -1723,8 +1841,13 @@ document.addEventListener(
             ) === "off"
         ) {
 
-            soundBtn.textContent =
-                "🔇";
+            const soundBtn =
+                document.getElementById("soundBtn");
+
+            if (soundBtn) {
+                soundBtn.textContent =
+                    "🔇";
+            }
 
         }
 
@@ -1747,6 +1870,7 @@ document.addEventListener(
     }
 );
 
+
 /* =====================================================
    TỰ LUẬN
    ===================================================== */
@@ -1760,7 +1884,6 @@ function startWriting() {
         );
 
 
-    // Nếu chủ đề hiện tại chưa đủ từ
     if (list.length === 0) {
 
         list =
@@ -1771,7 +1894,6 @@ function startWriting() {
     }
 
 
-    // Nếu HSK cũng không có
     if (list.length === 0) {
 
         list = [...words];
@@ -1844,14 +1966,12 @@ function renderWriting() {
         `${currentClass} → ${currentTopic}`;
 
 
-    // Hiện nghĩa tiếng Việt
     document.getElementById(
         "writingMeaning"
     ).textContent =
         word.meaning;
 
 
-    // Xóa câu trả lời cũ
     const input =
         document.getElementById(
             "writingAnswer"
@@ -1864,19 +1984,16 @@ function renderWriting() {
     input.focus();
 
 
-    // Xóa kết quả cũ
     document.getElementById(
         "writingResult"
     ).innerHTML = "";
 
 
-    // Khóa nút câu tiếp theo
     document.getElementById(
         "nextWriting"
     ).disabled = true;
 
 
-    // Hiện lại nút kiểm tra
     document.getElementById(
         "checkWriting"
     ).disabled = false;
@@ -1911,7 +2028,6 @@ function checkWritingAnswer() {
     }
 
 
-    // Chuẩn hóa câu trả lời
     const userAnswer =
         answer.replace(/\s/g, "");
 
@@ -1961,17 +2077,14 @@ function checkWritingAnswer() {
         `Điểm: ${writingScore}`;
 
 
-    // Không cho sửa sau khi kiểm tra
     input.disabled = true;
 
 
-    // Khóa nút kiểm tra
     document.getElementById(
         "checkWriting"
     ).disabled = true;
 
 
-    // Mở nút câu tiếp
     document.getElementById(
         "nextWriting"
     ).disabled = false;
@@ -2028,6 +2141,7 @@ function handleWritingKey(event) {
     }
 
 }
+
 
 /* =====================================================
    GỢI Ý TỰ LUẬN
