@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Trung</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">🇨🇳 Học Tiếng Trung</div>
+
+    <button class="sound-btn" id="soundBtn" title="Bật / tắt âm thanh">
+        🔊
+    </button>
+</header>
+
+
+<main>
+
+    <!-- ================= HOME ================= -->
+
+    <section id="home" class="page active">
+
+        <div class="hero">
+
+            <div class="small-title">
+                HỌC TIẾNG TRUNG THEO CÁCH CỦA BẠN
+            </div>
+
+            <h1>
+                Học tiếng Trung<br>
+                <span>theo cách của bạn</span>
+            </h1>
+
+            <p>
+                Chọn lớp HSK, tạo chủ đề riêng, thêm từ vựng
+                và học bằng Flashcard hoặc Quiz.
+            </p>
+
+            <button class="main-btn" onclick="openCreateTopicModal()">
+                ＋ Tạo chủ đề
+            </button>
+
+        </div>
+
+
+        <!-- THỐNG KÊ -->
+
+        <div class="stats">
+
+            <div class="stat-box">
+                <strong id="classCount">6</strong>
+                <span>Lớp HSK</span>
+            </div>
+
+            <div class="stat-box">
+                <strong id="topicCount">0</strong>
+                <span>Chủ đề</span>
+            </div>
+
+            <div class="stat-box">
+                <strong id="wordCount">0</strong>
+                <span>Từ vựng</span>
+            </div>
+
+        </div>
+
+
+        <!-- LỚP HSK -->
+
+        <h2>Chọn lớp HSK</h2>
+
+        <div class="hsk-grid" id="hskGrid"></div>
+
+
+        <!-- CHỦ ĐỀ CỦA TÔI -->
+
+        <h2>Chủ đề của tôi</h2>
+
+        <div class="my-topic-grid" id="myTopicGrid"></div>
+
+    </section>
+
+
+    <!-- ================= VOCABULARY ================= -->
+
+    <section id="vocab" class="page">
+
+        <div class="section-header">
+
+            <div>
+                <div class="small-title" id="vocabClassTitle">
+                    HSK1
+                </div>
+
+                <h1 class="page-title" id="vocabTopicTitle">
+                    Chủ đề
+                </h1>
+
+                <p id="vocabDescription">
+                    Từ vựng tiếng Trung
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <button
+                    class="secondary-btn"
+                    onclick="openCreateTopicModal()">
+                    ＋ Chủ đề
+                </button>
+
+                <button
+                    class="main-btn"
+                    onclick="openAddWordModal()">
+                    ＋ Thêm từ vựng
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="search-row">
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search"
+                placeholder="🔎 Tìm chữ Hán, Pinyin, nghĩa..."
+                oninput="renderVocabulary()">
+
+        </div>
+
+
+        <div class="vocabulary-list" id="vocabularyList"></div>
+
+    </section>
+
+
+    <!-- ================= FLASHCARD ================= -->
+
+    <section id="flashcard" class="page">
+
+        <div class="center-header">
+
+            <div class="small-title">
+                FLASHCARD
+            </div>
+
+            <h1>Học bằng Flashcard</h1>
+
+            <p id="flashTitle">
+                Ôn tập từ vựng
+            </p>
+
+        </div>
+
+
+        <div class="flash-area">
+
+            <div
+                class="flash-card"
+                id="flashCard"
+                onclick="flipCard()">
+
+                <div class="card-face">
+
+                    <div class="card-topic" id="flashTopic">
+                        HSK1
+                    </div>
+
+                    <div class="hanzi" id="flashHanzi">
+                        你好
+                    </div>
+
+                    <div class="pinyin" id="flashPinyin">
+                        Nǐ hǎo
+                    </div>
+
+                    <small>
+                        Bấm vào thẻ để xem nghĩa
+                    </small>
+
+                </div>
+
+
+                <div class="card-face back">
+
+                    <div class="meaning" id="flashMeaning">
+                        Xin chào
+                    </div>
+
+                    <div class="example" id="flashExample">
+                        你好！很高兴认识你。
+                    </div>
+
+                    <small>
+                        Bấm vào thẻ để lật lại
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="flash-buttons">
+
+            <button
+                class="secondary-btn"
+                onclick="previousCard()">
+                ← Trước
+            </button>
+
+            <button
+                class="main-btn"
+                onclick="speakCurrent()">
+                🔊 Phát âm
+            </button>
+
+            <button
+                class="secondary-btn"
+                onclick="nextCard()">
+                Tiếp →
+            </button>
+
+        </div>
+
+
+        <div class="progress" id="flashProgress">
+            1 / 10
+        </div>
+
+    </section>
+
+
+    <!-- ================= QUIZ ================= -->
+
+    <section id="quiz" class="page">
+
+        <div class="center-header">
+
+            <div class="small-title">
+                QUIZ
+            </div>
+
+            <h1>Kiểm tra từ vựng</h1>
+
+            <p id="quizTitle">
+                Chọn đáp án đúng
+            </p>
+
+        </div>
+
+
+        <div class="quiz-box">
+
+            <div class="quiz-top">
+
+                <span id="quizNumber">
+                    Câu 1/10
+                </span>
+
+                <span id="quizScore">
+                    Điểm: 0
+                </span>
+
+            </div>
+
+
+            <div class="question">
+
+                <div
+                    class="quiz-hanzi"
+                    id="quizHanzi">
+                    你好
+                </div>
+
+                <div
+                    class="quiz-pinyin"
+                    id="quizPinyin">
+                    Nǐ hǎo
+                </div>
+
+                <button
+                    class="speak-button"
+                    onclick="speakQuiz()">
+                    🔊 Nghe
+                </button>
+
+            </div>
+
+
+            <div
+                class="answers"
+                id="answers">
+            </div>
+
+
+            <button
+                class="main-btn full-btn"
+                id="nextQuiz"
+                onclick="nextQuiz()"
+                disabled>
+                Câu tiếp theo
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ================= TỰ LUẬN ================= -->
+
+<section id="writing" class="page">
+
+    <div class="center-header">
+
+        <div class="small-title">
+            TỰ LUẬN
+        </div>
+
+        <h1>Viết tiếng Trung</h1>
+
+        <p id="writingTitle">
+            Nhìn nghĩa tiếng Việt và viết chữ Trung
+        </p>
+
+    </div>
+
+
+    <div class="writing-box">
+
+        <!-- TIẾN ĐỘ -->
+
+        <div class="quiz-top">
+
+            <span id="writingNumber">
+                Câu 1/10
+            </span>
+
+            <span id="writingScore">
+                Điểm: 0
+            </span>
+
+        </div>
+
+
+        <!-- CÂU HỎI -->
+
+        <div class="writing-question">
+
+            <div class="writing-label">
+                Nghĩa tiếng Việt
+            </div>
+
+            <div
+                class="writing-meaning"
+                id="writingMeaning">
+                Xin chào
+            </div>
+
+        </div>
+
+
+        <!-- Ô NHẬP -->
+
+        <div class="writing-input-area">
+
+            <input
+                type="text"
+                id="writingAnswer"
+                class="writing-input"
+                placeholder="Nhập câu trả lời bằng tiếng Trung..."
+                autocomplete="off"
+                onkeydown="handleWritingKey(event)">
+
+        </div>
+
+
+        <!-- NÚT KIỂM TRA -->
+
+ <!-- NÚT KIỂM TRA + GỢI Ý -->
+
+<div class="writing-actions">
+
+    <button
+        class="main-btn"
+        id="checkWriting"
+        onclick="checkWritingAnswer()">
+        ✓ Kiểm tra
+    </button>
+
+    <button
+        class="secondary-btn"
+        id="hintWriting"
+        onclick="showWritingHint()">
+        💡 Gợi ý
+    </button>
+
+</div>
+<!-- GỢI Ý -->
+
+<div
+    class="writing-hint"
+    id="writingHint"
+    style="display: none;">
+
+    <div class="hint-label">
+        💡 Gợi ý
+    </div>
+
+    <div
+        class="hint-hanzi"
+        id="hintHanzi">
+    </div>
+
+    <div
+        class="hint-pinyin"
+        id="hintPinyin">
+    </div>
+
+</div>
+
+        <!-- KẾT QUẢ -->
+
+        <div
+            class="writing-result"
+            id="writingResult">
+        </div>
+
+
+        <!-- CÂU TIẾP -->
+
+        <button
+            class="secondary-btn full-btn"
+            id="nextWriting"
+            onclick="nextWriting()"
+            disabled>
+            Câu tiếp theo →
+        </button>
+
+    </div>
+
+</section>
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+    <button
+        class="nav-item active"
+        data-page="home"
+        onclick="showPage('home')">
+        🏠
+        <span>Trang chủ</span>
+    </button>
+
+    <button
+        class="nav-item"
+        data-page="vocab"
+        onclick="showPage('vocab')">
+        📚
+        <span>Từ vựng</span>
+    </button>
+
+    <button
+        class="nav-item"
+        data-page="flashcard"
+        onclick="showPage('flashcard')">
+        🃏
+        <span>Flashcard</span>
+    </button>
+
+    <button
+        class="nav-item"
+        data-page="quiz"
+        onclick="showPage('quiz')">
+        📝
+        <span>Quiz</span>
+    </button>
+
+    <button
+    class="nav-item"
+    data-page="writing"
+    onclick="showPage('writing')">
+    ✍️
+    <span>Tự luận</span>
+</button>
+
+</nav>
+
+
+<!-- ================= MODAL TẠO CHỦ ĐỀ ================= -->
+
+<div class="modal" id="topicModal">
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('topicModal')">
+            ×
+        </button>
+
+        <h2>Tạo chủ đề mới</h2>
+
+        <p class="modal-subtitle">
+            Chọn lớp HSK và đặt tên cho chủ đề.
+        </p>
+
+
+        <label>Lớp HSK</label>
+
+        <select id="topicClass">
+            <option value="HSK1">HSK1</option>
+            <option value="HSK2">HSK2</option>
+            <option value="HSK3">HSK3</option>
+            <option value="HSK4">HSK4</option>
+            <option value="HSK5">HSK5</option>
+            <option value="HSK6">HSK6</option>
+        </select>
+
+
+        <label>Tên chủ đề</label>
+
+        <input
+            type="text"
+            id="topicName"
+            placeholder="Ví dụ: Gia đình">
+
+
+        <label>Mô tả</label>
+
+        <input
+            type="text"
+            id="topicDescription"
+            placeholder="Ví dụ: Từ vựng về gia đình">
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('topicModal')">
+                Hủy
+            </button>
+
+            <button
+                class="main-btn"
+                onclick="createTopic()">
+                ＋ Tạo chủ đề
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MODAL THÊM TỪ ================= -->
+
+<div class="modal" id="wordModal">
+
+    <div class="modal-box word-modal">
+
+        <button
+            class="modal-close"
+            onclick="closeModal('wordModal')">
+            ×
+        </button>
+
+        <h2>Thêm từ vựng</h2>
+
+        <p
+            class="modal-subtitle"
+            id="wordModalTitle">
+            HSK1 → Chủ đề
+        </p>
+
+
+        <label>Chữ Hán</label>
+
+        <input
+            type="text"
+            id="hanziInput"
+            placeholder="Ví dụ: 你好">
+
+
+        <label>Pinyin</label>
+
+        <input
+            type="text"
+            id="pinyinInput"
+            placeholder="Ví dụ: ni3hao3"
+            autocomplete="off">
+
+        <div class="pinyin-help">
+            💡 Bạn có thể nhập <b>ni3hao3</b> → <b>nǐhǎo</b>
+        </div>
+
+
+        <div class="tone-buttons">
+
+            <button onclick="insertTone('ā')">ā</button>
+            <button onclick="insertTone('á')">á</button>
+            <button onclick="insertTone('ǎ')">ǎ</button>
+            <button onclick="insertTone('à')">à</button>
+
+            <button onclick="insertTone('ē')">ē</button>
+            <button onclick="insertTone('é')">é</button>
+            <button onclick="insertTone('ě')">ě</button>
+            <button onclick="insertTone('è')">è</button>
+
+            <button onclick="insertTone('ī')">ī</button>
+            <button onclick="insertTone('í')">í</button>
+            <button onclick="insertTone('ǐ')">ǐ</button>
+            <button onclick="insertTone('ì')">ì</button>
+
+            <button onclick="insertTone('ō')">ō</button>
+            <button onclick="insertTone('ó')">ó</button>
+            <button onclick="insertTone('ǒ')">ǒ</button>
+            <button onclick="insertTone('ò')">ò</button>
+
+            <button onclick="insertTone('ū')">ū</button>
+            <button onclick="insertTone('ú')">ú</button>
+            <button onclick="insertTone('ǔ')">ǔ</button>
+            <button onclick="insertTone('ù')">ù</button>
+
+            <button onclick="insertTone('ǖ')">ǖ</button>
+            <button onclick="insertTone('ǘ')">ǘ</button>
+            <button onclick="insertTone('ǚ')">ǚ</button>
+            <button onclick="insertTone('ǜ')">ǜ</button>
+
+        </div>
+
+
+        <label>Nghĩa tiếng Việt</label>
+
+        <input
+            type="text"
+            id="meaningInput"
+            placeholder="Ví dụ: Xin chào">
+
+
+        <label>Câu ví dụ</label>
+
+        <textarea
+            id="exampleInput"
+            placeholder="Ví dụ: 你好！很高兴认识你。"></textarea>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('wordModal')">
+                Hủy
+            </button>
+
+            <button
+                class="main-btn"
+                onclick="addWord()">
+                ＋ Thêm từ
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
