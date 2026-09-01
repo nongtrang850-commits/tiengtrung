@@ -1144,48 +1144,42 @@ function speak(text) {
    NÚT ÂM THANH
    ===================================================== */
 
-const soundBtn =
-    document.getElementById(
-        "soundBtn"
-    );
+document.addEventListener("DOMContentLoaded", function () {
 
+    const soundBtn = document.getElementById("soundBtn");
 
-soundBtn.addEventListener(
-    "click",
-    function() {
+    if (!soundBtn) {
+        return;
+    }
+
+    if (localStorage.getItem("sound") === "off") {
+        soundBtn.textContent = "🔇";
+    } else {
+        soundBtn.textContent = "🔊";
+    }
+
+    soundBtn.addEventListener("click", function () {
 
         const current =
-            localStorage.getItem(
-                "sound"
-            );
-
+            localStorage.getItem("sound");
 
         if (current === "off") {
 
-            localStorage.setItem(
-                "sound",
-                "on"
-            );
+            localStorage.setItem("sound", "on");
 
-            soundBtn.textContent =
-                "🔊";
+            soundBtn.textContent = "🔊";
 
-        }
-        else {
+        } else {
 
-            localStorage.setItem(
-                "sound",
-                "off"
-            );
+            localStorage.setItem("sound", "off");
 
-            soundBtn.textContent =
-                "🔇";
+            soundBtn.textContent = "🔇";
 
         }
 
-    }
-);
+    });
 
+});
 
 /* =====================================================
    FLASHCARD
