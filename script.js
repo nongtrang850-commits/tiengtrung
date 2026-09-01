@@ -6,14 +6,58 @@
 /* =====================================================
    DỮ LIỆU MẶC ĐỊNH
    ===================================================== */
-
+const defaultWords = [
+    {
+        id: 1,
+        hsk: "HSK1",
+        topic: "Chào hỏi",
+        hanzi: "你好",
+        pinyin: "nǐ hǎo",
+        meaning: "Xin chào",
+        example: "你好！很高兴认识你。"
+    },
+    {
+        id: 2,
+        hsk: "HSK1",
+        topic: "Chào hỏi",
+        hanzi: "谢谢",
+        pinyin: "xiè xie",
+        meaning: "Cảm ơn",
+        example: "谢谢你的帮助。"
+    },
+    {
+        id: 3,
+        hsk: "HSK1",
+        topic: "Chào hỏi",
+        hanzi: "再见",
+        pinyin: "zài jiàn",
+        meaning: "Tạm biệt",
+        example: "明天再见！"
+    },
+    {
+        id: 4,
+        hsk: "HSK1",
+        topic: "Chào hỏi",
+        hanzi: "你好",
+        pinyin: "nǐ hǎo",
+        meaning: "Xin chào",
+        example: "老师，你好！"
+    }
+];
 
 
 
 /* =====================================================
    DỮ LIỆU CHỦ ĐỀ MẶC ĐỊNH
    ===================================================== */
-
+const defaultTopics = [
+    {
+        id: 1,
+        hsk: "HSK1",
+        name: "Chào hỏi",
+        description: "Từ vựng chào hỏi cơ bản"
+    }
+];
 
 
 /* =====================================================
