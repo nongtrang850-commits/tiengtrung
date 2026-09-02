@@ -1003,48 +1003,33 @@ function convertPinyin(text) {
 
 
 /* =====================================================
-   TỰ ĐỘNG ĐỔI PINYIN KHI NHẬP
+   PINYIN TRÊN ĐIỆN THOẠI
+   Không tự động đổi khi đang gõ
    ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+document.addEventListener("DOMContentLoaded", function () {
 
-        const input =
-            document.getElementById(
-                "pinyinInput"
-            );
+    const input = document.getElementById("pinyinInput");
 
-
-        if (!input) {
-            return;
-        }
-
-
-        input.addEventListener(
-            "input",
-            function() {
-
-                const value =
-                    this.value;
-
-
-                const converted =
-                    convertPinyin(value);
-
-
-                if (value !== converted) {
-
-                    this.value =
-                        converted;
-
-                }
-
-            }
-        );
-
+    if (!input) {
+        return;
     }
-);
+
+    /*
+     * Khi đang gõ:
+     * ni3hao3
+     * kuai4
+     * xue2sheng1
+     *
+     * Không tự đổi để tránh con trỏ bị nhảy
+     * trên điện thoại.
+     */
+
+    input.addEventListener("input", function () {
+        // Không làm gì ở đây
+    });
+
+});
 
 
 /* =====================================================
