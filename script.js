@@ -74,7 +74,7 @@ let topics =
 
 /* =====================================================
    BIẾN
-   ===================================================== */
+   f */
 
 let currentClass = "HSK1";
 
@@ -1458,39 +1458,17 @@ function speakCurrent() {
 
 function startQuiz() {
 
-    let list =
+    // Lấy TOÀN BỘ từ vựng của chủ đề đang chọn
+    const list =
         words.filter(word =>
             word.hsk === currentClass &&
             word.topic === currentTopic
         );
 
 
-    if (list.length < 4) {
-
-        list =
-            words.filter(word =>
-                word.hsk === currentClass
-            );
-
-    }
-
-
-    if (list.length < 4) {
-
-        list =
-            [...words];
-
-    }
-
-
     quizWords =
-        [...list]
-        .sort(
+        [...list].sort(
             () => Math.random() - 0.5
-        )
-        .slice(
-            0,
-            Math.min(10, list.length)
         );
 
 
@@ -1862,38 +1840,17 @@ document.addEventListener(
 
 function startWriting() {
 
-    let list =
+    // Lấy TOÀN BỘ từ vựng của chủ đề đang chọn
+    const list =
         words.filter(word =>
             word.hsk === currentClass &&
             word.topic === currentTopic
         );
 
 
-    if (list.length === 0) {
-
-        list =
-            words.filter(word =>
-                word.hsk === currentClass
-            );
-
-    }
-
-
-    if (list.length === 0) {
-
-        list = [...words];
-
-    }
-
-
     writingWords =
-        [...list]
-        .sort(
+        [...list].sort(
             () => Math.random() - 0.5
-        )
-        .slice(
-            0,
-            Math.min(10, list.length)
         );
 
 
