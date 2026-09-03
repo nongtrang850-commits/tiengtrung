@@ -95,7 +95,7 @@ let writingWords = [];
 
 let writingIndex = 0;
 
-let writingScore = 0;
+let editingWordId = null;
 
 
 /* =====================================================
@@ -699,14 +699,19 @@ function renderVocabulary() {
 
                 <button
                     class="listen"
-                    onclick="speak('${escapeAttribute(word.hanzi)}')">
+                    onclick="speak('${escapeAttribute(word.hanzi)}'); event.stopPropagation();">
                     🔊
                 </button>
 
+                <button
+                    class="edit-word"
+                    onclick="editWord('${escapeAttribute(word.id)}'); event.stopPropagation();">
+                    ✏️
+                </button>
 
                 <button
-                    class="delete-topic"
-                    onclick="deleteTopic('${topic.id}'); event.stopPropagation();">
+                    class="delete-word"
+                    onclick="deleteWord('${escapeAttribute(word.id)}'); event.stopPropagation();">
                     🗑
                 </button>
 
@@ -810,46 +815,107 @@ function addWord() {
     }
 
 
+if (editingWordId !== null) {
+
+    const word = words.find(
+        item => String(item.id) === String(editingWordId)
+    );
+
+    if (word) {
+
+        word.hanzi = hanzi;
+
+        word.pinyin = convertPinyin(pinyin);
+
+        word.meaning = meaning;
+
+        word.example = example;
+
+    }
+
+    editingWordId = null;
+
+}
+else {
+
     words.push({
 
-        id:
-            Date.now(),
+        id: Date.now(),
 
-        hsk:
-            currentClass,
+        hsk: currentClass,
 
-        topic:
-            currentTopic,
+        topic: currentTopic,
 
-        hanzi:
-            hanzi,
+        hanzi: hanzi,
 
-        pinyin:
-            convertPinyin(pinyin),
+        pinyin: convertPinyin(pinyin),
 
-        meaning:
-            meaning,
+        meaning: meaning,
 
-        example:
-            example
+        example: example
 
     });
 
-
-    saveData();
-
-
-    closeModal("wordModal");
-
-
-    renderVocabulary();
-
-    renderHome();
-
-
-    alert("✅ Đã thêm từ vựng!");
 }
 
+
+const isEditing = editingWordId !== null;
+
+saveData();
+
+closeModal("wordModal");
+
+renderVocabulary();
+
+renderHome();
+
+editingWordId = null;
+
+alert(
+    isEditing
+        ? "✅ Đã cập nhật từ vựng!"
+        : "✅ Đã thêm từ vựng!"
+);
+
+editingWordId = null;
+}
+
+/* =====================================================
+   CHỈNH SỬA TỪ VỰNG
+   ===================================================== */
+
+function editWord(id) {
+
+    const word = words.find(
+        item => String(item.id) === String(id)
+    );
+
+    if (!word) {
+        alert("Không tìm thấy từ vựng.");
+        return;
+    }
+
+    editingWordId = word.id;
+
+    document.getElementById("wordModalTitle")
+        .textContent = "Chỉnh sửa từ vựng";
+
+    document.getElementById("hanziInput").value =
+        word.hanzi;
+
+    document.getElementById("pinyinInput").value =
+        word.pinyin;
+
+    document.getElementById("meaningInput").value =
+        word.meaning;
+
+    document.getElementById("exampleInput").value =
+        word.example || "";
+
+    document
+        .getElementById("wordModal")
+        .classList.add("show");
+}
 
 /* =====================================================
    XÓA TỪ
