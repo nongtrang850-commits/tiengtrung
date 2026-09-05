@@ -968,3 +968,133 @@ h2 {
 .full-btn {
     width: 100%;
 }
+/* =====================================================
+   TRANG CHỌN CHỦ ĐỀ THEO HSK
+   ===================================================== */
+
+.topic-list-page {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 25px;
+}
+
+
+.class-topic-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 24px;
+
+    padding: 25px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.class-topic-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+
+.class-topic-icon {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 20px;
+
+    background: #fff4f4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 38px;
+
+    flex-shrink: 0;
+}
+
+
+.class-topic-info {
+    flex: 1;
+}
+
+
+.class-topic-info h3 {
+    margin: 0 0 8px;
+
+    font-size: 25px;
+}
+
+
+.class-topic-info p {
+    margin: 0 0 10px;
+
+    color: #777;
+
+    font-size: 16px;
+}
+
+
+.class-topic-info span {
+    color: #e3343f;
+
+    font-size: 15px;
+
+    font-weight: 600;
+}
+
+
+.class-topic-arrow {
+    font-size: 30px;
+
+    color: #e3343f;
+
+    font-weight: bold;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .class-topic-card {
+        padding: 20px;
+
+        gap: 15px;
+    }
+
+
+    .class-topic-icon {
+        width: 58px;
+        height: 58px;
+
+        font-size: 30px;
+    }
+
+
+    .class-topic-info h3 {
+        font-size: 21px;
+    }
+
+
+    .class-topic-info p {
+        font-size: 14px;
+    }
+
+
+    .class-topic-arrow {
+        font-size: 24px;
+    }
+
+}

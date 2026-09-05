@@ -95,6 +95,9 @@ let writingWords = [];
 
 let writingIndex = 0;
 
+let writingScore = 0;
+
+
 let editingWordId = null;
 
 
@@ -248,43 +251,136 @@ function renderHskClasses() {
 
     }).join("");
 }
-
-
 /* =====================================================
-   MỞ HSK
+   MỞ HSK → HIỂN THỊ CHỦ ĐỀ
    ===================================================== */
 
 function openHsk(hsk) {
 
     currentClass = hsk;
 
-
     const classTopics =
         topics.filter(item => item.hsk === hsk);
 
+    // Đổi tiêu đề
+    const title =
+        document.getElementById("topicsClassTitle");
 
+    if (title) {
+        title.textContent = hsk;
+    }
+
+    // Nếu HSK chưa có chủ đề
     if (classTopics.length === 0) {
 
-        alert(
-            `${hsk} chưa có chủ đề. Hãy tạo chủ đề mới nhé!`
-        );
+        document.getElementById("classTopicList").innerHTML = `
 
-        openCreateTopicModal(hsk);
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                <h3>
+                    ${hsk} chưa có chủ đề
+                </h3>
+
+                <p>
+                    Hãy tạo chủ đề đầu tiên cho ${hsk}.
+                </p>
+
+                <button
+                    class="main-btn"
+                    onclick="openCreateTopicModal('${hsk}')">
+                    ＋ Tạo chủ đề
+                </button>
+
+            </div>
+
+        `;
+
+        showPage("topics");
 
         return;
     }
 
+    // Hiển thị danh sách chủ đề
+    renderClassTopics(classTopics);
 
-    const topic =
-        classTopics[0];
-
-
-    currentTopic = topic.name;
-
-
-    showPage("vocab");
+    // QUAN TRỌNG:
+    // Không được showPage("vocab") ở đây
+    showPage("topics");
 }
 
+/* =====================================================
+   HIỂN THỊ CHỦ ĐỀ CỦA HSK
+   ===================================================== */
+
+function renderClassTopics(classTopics) {
+
+    const container =
+        document.getElementById("classTopicList");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        classTopics.map(topic => {
+
+            const wordCount =
+                words.filter(word =>
+                    word.hsk === topic.hsk &&
+                    word.topic === topic.name
+                ).length;
+
+
+            return `
+
+                <div
+                    class="class-topic-card"
+                    onclick="openTopic(
+                        '${escapeAttribute(topic.hsk)}',
+                        '${escapeAttribute(topic.name)}'
+                    )">
+
+                    <div class="class-topic-icon">
+                        📖
+                    </div>
+
+
+                    <div class="class-topic-info">
+
+                        <h3>
+                            ${escapeHtml(topic.name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(
+                                topic.description ||
+                                "Chủ đề tiếng Trung"
+                            )}
+                        </p>
+
+                        <span>
+                            ${topic.hsk} · ${wordCount} từ vựng
+                        </span>
+
+                    </div>
+
+
+                    <div class="class-topic-arrow">
+                        →
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+}
 
 /* =====================================================
    CHỦ ĐỀ CỦA TÔI
@@ -792,92 +888,104 @@ function addWord() {
 
 
     if (!hanzi) {
-
         alert("Bạn chưa nhập chữ Hán.");
-
         return;
     }
 
 
     if (!pinyin) {
-
         alert("Bạn chưa nhập Pinyin.");
-
         return;
     }
 
 
     if (!meaning) {
-
         alert("Bạn chưa nhập nghĩa tiếng Việt.");
-
         return;
     }
 
 
-if (editingWordId !== null) {
+    // Lưu trạng thái trước khi thay đổi
+    const isEditing = editingWordId !== null;
 
-    const word = words.find(
-        item => String(item.id) === String(editingWordId)
-    );
 
-    if (word) {
+    // ================= CHỈNH SỬA =================
 
-        word.hanzi = hanzi;
+    if (isEditing) {
 
-        word.pinyin = convertPinyin(pinyin);
+        const word = words.find(
+            item =>
+                String(item.id) ===
+                String(editingWordId)
+        );
 
-        word.meaning = meaning;
 
-        word.example = example;
+        if (word) {
+
+            word.hanzi = hanzi;
+
+            word.pinyin =
+                convertPinyin(pinyin);
+
+            word.meaning = meaning;
+
+            word.example = example;
+
+        }
 
     }
 
+
+    // ================= THÊM MỚI =================
+
+    else {
+
+        words.push({
+
+            id: Date.now(),
+
+            hsk: currentClass,
+
+            topic: currentTopic,
+
+            hanzi: hanzi,
+
+            pinyin:
+                convertPinyin(pinyin),
+
+            meaning: meaning,
+
+            example: example
+
+        });
+
+    }
+
+
+    // Xóa trạng thái chỉnh sửa
     editingWordId = null;
 
-}
-else {
 
-    words.push({
-
-        id: Date.now(),
-
-        hsk: currentClass,
-
-        topic: currentTopic,
-
-        hanzi: hanzi,
-
-        pinyin: convertPinyin(pinyin),
-
-        meaning: meaning,
-
-        example: example
-
-    });
-
-}
+    // Lưu dữ liệu
+    saveData();
 
 
-const isEditing = editingWordId !== null;
+    // Đóng modal
+    closeModal("wordModal");
 
-saveData();
 
-closeModal("wordModal");
+    // Cập nhật giao diện
+    renderVocabulary();
 
-renderVocabulary();
+    renderHome();
 
-renderHome();
 
-editingWordId = null;
-
-alert(
-    isEditing
-        ? "✅ Đã cập nhật từ vựng!"
-        : "✅ Đã thêm từ vựng!"
-);
-
-editingWordId = null;
+    // Thông báo
+    alert(
+        isEditing
+            ? "✅ Đã cập nhật từ vựng!"
+            : "✅ Đã thêm từ vựng!"
+    );
 }
 
 /* =====================================================
